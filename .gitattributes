@@ -1,2 +1,36 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+# Import libraries for webhooks and rich embeds
+import discord
+from discord import Webhook, Embed
+
+# Import library for OP.GG API
+import opgg
+
+# Set the channel to post the leaderboard
+channelID = "CHANNEL_ID"
+
+# Create a function to query and post the leaderboard
+async def postLeaderboard():
+  # Query the OP.GG API
+  data = await opgg.getLeaderboard(5)
+
+  # Create the Rich Embed
+  embed = Embed(title="Leaderboard", description="Top 5 players", color=0x0099ff)
+  embed.add_field(name="Player 1", value=data[0].name, inline=True)
+  embed.add_field(name="Rank", value=data[0].rank, inline=True)
+  embed.add_field(name="Player 2", value=data[1].name, inline=True)
+  embed.add_field(name="Rank", value=data[1].rank, inline=True)
+  embed.add_field(name="Player 3", value=data[2].name, inline=True)
+  embed.add_field(name="Rank", value=data[2].rank, inline=True)
+  embed.add_field(name="Player 4", value=data[3].name, inline=True)
+  embed.add_field(name="Rank", value=data[3].rank, inline=True)
+  embed.add_field(name="Player 5", value=data[4].name, inline=True)
+  embed.add_field(name="Rank", value=data[4].rank, inline=True)
+
+  # Post the leaderboard
+  webhook = Webhook.partial(channelID, "WEBHOOK_URL", adapter=discord.AsyncWebhookAdapter(session))
+  await webhook.send(embed=embed)
+
+# Schedule the leaderboard to post every day at 8PM
+schedule.every().day.at("20:00").do(postLeaderboard)
