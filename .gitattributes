@@ -42,4 +42,28 @@ while True:
             print("Error: Could not fetch rank for " + username)
 
     # Sleep for 1 hour
+    
     time.sleep(3600)
+    # Function to print the usernames and their ranks
+def print_ranks():
+    for username in usernames:
+        # Query the API
+        url = 'https://na.op.gg/summoner/userName=' + username
+        response = requests.get(url)
+
+        # Parse the response to get the rank
+        if response.status_code == 200:
+            rank = response.text.split('<div class="TierRank">')[1].split('</div>')[0]
+            print(username + "'s rank is: " + rank)
+        else:
+            print("Error: Could not fetch rank for " + username)
+
+# Function to handle the command
+def handle_leaderboards():
+    print("Leaderboard:")
+    print_ranks()
+
+# Add code for handling the /Leaderboards command
+@bot.command(name='Leaderboards')
+async def leaderboards(ctx):
+    handle_leaderboards()
