@@ -7,30 +7,39 @@ from discord import Webhook, Embed
 # Import library for OP.GG API
 import opgg
 
-# Set the channel to post the leaderboard
-channelID = "CHANNEL_ID"
+import requests
+import datetime
+import time
 
-# Create a function to query and post the leaderboard
-async def postLeaderboard():
-  # Query the OP.GG API
-  data = await opgg.getLeaderboard(5)
+while True:
+    # Get the current time
+    now = datetime.datetime.now()
 
-  # Create the Rich Embed
-  embed = Embed(title="Leaderboard", description="Top 5 players", color=0x0099ff)
-  embed.add_field(name="Player 1", value=data[0].name, inline=True)
-  embed.add_field(name="Rank", value=data[0].rank, inline=True)
-  embed.add_field(name="Player 2", value=data[1].name, inline=True)
-  embed.add_field(name="Rank", value=data[1].rank, inline=True)
-  embed.add_field(name="Player 3", value=data[2].name, inline=True)
-  embed.add_field(name="Rank", value=data[2].rank, inline=True)
-  embed.add_field(name="Player 4", value=data[3].name, inline=True)
-  embed.add_field(name="Rank", value=data[3].rank, inline=True)
-  embed.add_field(name="Player 5", value=data[4].name, inline=True)
-  embed.add_field(name="Rank", value=data[4].rank, inline=True)
+    # Set the time to 8pm
+    target_time = datetime.datetime(now.year, now.month, now.day, now.hour, 0, 0)
 
-  # Post the leaderboard
-  webhook = Webhook.partial(channelID, "WEBHOOK_URL", adapter=discord.AsyncWebhookAdapter(session))
-  await webhook.send(embed=embed)
+    # Get the difference in time
+    time_diff = target_time - now
 
-# Schedule the leaderboard to post every day at 8PM
-schedule.every().day.at("20:00").do(postLeaderboard)
+    # Sleep for the difference in time
+    time.sleep(time_diff.seconds)
+
+    # Array of usernames to query
+    usernames = ["Fake News Media", "captiands", "LeagueSuxxss", "aduhqpwhb", "slimeyt"]
+
+    # Iterate through the usernames
+    for username in usernames:
+
+        # Query the API
+        url = 'https://na.op.gg/summoner/userName=' + username
+        response = requests.get(url)
+
+        # Parse the response to get the rank
+        if response.status_code == 200:
+            rank = response.text.split('<div class="TierRank">')[1].split('</div>')[0]
+            print(username + "'s rank is: " + rank)
+        else:
+            print("Error: Could not fetch rank for " + username)
+
+    # Sleep for 1 hour
+    time.sleep(3600)
